@@ -124,9 +124,12 @@ export default function EnglishFooter() {
             © 2026 CAUIICE. 中国高校校办产业协会国际合作与交流专业委员会 版权所有.
           </div>
           <div className="flex items-center space-x-4">
-            <Link href="/" className="hover:text-white transition-colors">
+            <a
+              href={process.env.NEXT_PUBLIC_ZH_SITE_URL || 'http://localhost:3000'}
+              className="hover:text-white transition-colors"
+            >
               返回中文主站
-            </Link>
+            </a>
             <span>•</span>
             <Link href="/en/contact" className="hover:text-white transition-colors">
               合规与声明

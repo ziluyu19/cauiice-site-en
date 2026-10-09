@@ -239,6 +239,7 @@ npm run dev
 | `NEXT_PUBLIC_FIREBASE_APP_ID` | **必填** | Firebase Web 应用程序 App ID |
 | `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | 可选 | Google Analytics 网站分析统计 ID (`G-XXXXXXXXXX`) |
 | `NEXT_PUBLIC_ADMIN_UID` | **必填** | 经授权的管理员账号 UID（与 Firebase Auth 和安全规则联动） |
+| `NEXT_PUBLIC_ZH_SITE_URL` | 可选 | 中文主站跳转地址（默认 `http://localhost:3000`） |
 | `GOOGLE_APPLICATION_CREDENTIALS` | 可选 | 本地服务账号 JSON 凭据路径（仅供本地 Admin CLI 脚本使用） |
 
 ### 环境变量参考模板 (`.env.example`)
@@ -258,6 +259,9 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="G-XXXXXXXXXX"
 
 # 经授权的管理员 UID (在 cauiice-site-en 的 Firebase Console 中生成)
 NEXT_PUBLIC_ADMIN_UID="your-authorized-admin-uid"
+
+# 中文主站跳转地址 (开发环境默认 http://localhost:3000)
+NEXT_PUBLIC_ZH_SITE_URL="http://localhost:3000"
 ```
 
 ---
