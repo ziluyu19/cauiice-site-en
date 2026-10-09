@@ -1,6 +1,6 @@
-# CAUIICE International Portal & Content Management System
+# CAUIICE 国际门户与内容管理系统 (International Portal & CMS)
 
-Official English digital portal and administrative Content Management System (CMS) for the **International Cooperation and Exchange Committee of the Chinese Association of University-run Industries** (CAUIICE / 国专委).
+中国高校校办产业协会国际合作与交流专业委员会（CAUIICE / 国专委）官方英文数字化门户与管理后台内容管理系统。
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.3.5-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.2.8-blue?style=flat-square&logo=react)](https://react.dev/)
@@ -10,394 +10,393 @@ Official English digital portal and administrative Content Management System (CM
 
 ---
 
-## Table of Contents
+## 目录 (Table of Contents)
 
-- [Project Overview](#project-overview)
-- [Key Features](#key-features)
-  - [Public English Portal](#public-english-portal)
-  - [Administration CMS](#administration-cms)
-- [Technology Stack](#technology-stack)
-- [Project Structure](#project-structure)
-- [Requirements](#requirements)
-- [Installation and Local Development](#installation-and-local-development)
-- [Environment Variables](#environment-variables)
-- [Firebase Configuration](#firebase-configuration)
-  - [Dedicated Project](#dedicated-project)
-  - [Firestore Collections](#firestore-collections)
-  - [Security Rules Overview](#security-rules-overview)
-  - [Data Seeding Script](#data-seeding-script)
-- [Administrator Access](#administrator-access)
-- [Build and Validation](#build-and-validation)
-- [Security Notes](#security-notes)
-- [Deployment Status and Future Roadmap](#deployment-status-and-future-roadmap)
-- [License and Disclaimer](#license-and-disclaimer)
-
----
-
-## Project Overview
-
-The **International Cooperation and Exchange Committee of the Chinese Association of University-run Industries** (CAUIICE / 中国高校校办产业协会国际合作与交流专业委员会) serves as a specialized bridge connecting Chinese higher-education institutions, university science parks, spin-offs, and technology transfer offices with international universities, research institutes, and global innovation partners.
-
-This repository hosts the **official English digital portal** (`/en`) and the **dedicated administrative CMS** (`/admin`). It is designed specifically for an international audience, enabling overseas partners to:
-
-- Understand the committee's mandate, statutory status, and governance.
-- Explore international industry-university-research cooperation projects.
-- Browse the member network across key Chinese universities and science parks.
-- Read official news, event announcements, and cross-border tech transfer insights.
-- Submit direct partnership enquiries through a standardized, privacy-compliant channel.
+- [项目概述 (Project Overview)](#项目概述-project-overview)
+- [核心功能架构 (Key Features)](#核心功能架构-key-features)
+  - [前台公共英文门户 (Public English Portal)](#前台公共英文门户-public-english-portal)
+  - [后台内容管理系统 (Administration CMS)](#后台内容管理系统-administration-cms)
+- [技术栈选型 (Technology Stack)](#技术栈选型-technology-stack)
+- [项目目录结构 (Project Structure)](#项目目录结构-project-structure)
+- [环境依赖要求 (Requirements)](#环境依赖要求-requirements)
+- [本地安装与开发 (Installation & Local Development)](#本地安装与开发-installation--local-development)
+- [环境变量配置 (Environment Variables)](#环境变量配置-environment-variables)
+- [Firebase 云端配置与数据层 (Firebase Configuration)](#firebase-云端配置与数据层-firebase-configuration)
+  - [独立云端项目 (Dedicated Project)](#独立云端项目-dedicated-project)
+  - [Firestore 集合架构 (Firestore Collections)](#firestore-集合架构-firestore-collections)
+  - [安全规则概述 (Security Rules)](#安全规则概述-security-rules)
+  - [基础数据初始化脚本 (Data Seeding Script)](#基础数据初始化脚本-data-seeding-script)
+- [管理员权限与后台访问 (Administrator Access)](#管理员权限与后台访问-administrator-access)
+- [项目构建与测试验证 (Build & Validation)](#项目构建与测试验证-build--validation)
+- [安全合规守则 (Security Notes)](#安全合规守则-security-notes)
+- [部署状态与后续规划 (Deployment Status & Roadmap)](#部署状态与后续规划-deployment-status--roadmap)
+- [知识产权与法定声明 (License & Disclaimer)](#知识产权与法定声明-license--disclaimer)
 
 ---
 
-## Key Features
+## 项目概述 (Project Overview)
 
-### Public English Portal
+**中国高校校办产业协会国际合作与交流专业委员会**（International Cooperation and Exchange Committee of the Chinese Association of University-run Industries，简称 **CAUIICE / 国专委**）是全国高校产业体系开展涉外科技合作、国际产学研协同创新、科技成果跨境转化与跨国交流合作的专业化组织平台。
 
-All public English routes reside under `/en`:
+本项目是专为国际受众打造的**官方英文版数字化综合门户**（`/en`）与配套的**内容管理系统 CMS**（`/admin`），旨在面向海外大学、国际科研机构、跨国科技园区、海外商协会及科技投资伙伴，提供权威透明的展示与联络通道：
 
-| Route | Page | Key Capabilities |
+- **展示法定定位与组织治理**：清晰呈现专委会历史背景、业务职责、理事会领导与常设秘书处架构。
+- **发布国际产学研合作项目**：集中展示智能制造、绿色低碳、生物医药、人工智能、教育科技等重点领域项目。
+- **呈现中国高校科技园网络**：展示重点大学产业、国家大学科技园、骨干校办企业与技术转移机构名录。
+- **提供英文资讯与政策洞察**：发布涉外工作动态、国际学术年会活动与科技成果跨境转化合规观察。
+- **标准化对接意向通道**：提供符合国际隐私规范的 8 大字段标准化在线询盘通道，促进中外协同精准撮合。
+
+---
+
+## 核心功能架构 (Key Features)
+
+### 前台公共英文门户 (Public English Portal)
+
+所有英文公共页面均统一组织在 `/en` 路由体系下：
+
+| 页面路由 (Route) | 页面名称 (Page) | 核心功能与实现特性 (Key Capabilities) |
 | :--- | :--- | :--- |
-| `/en` | **Home Portal** | Hero banner, core mission, strategic metrics, featured cooperation projects, latest news highlights, quick access cards. |
-| `/en/about` | **About Overview** | Landing page introducing the committee's history, mission, and mandate. |
-| `/en/about/committee` | **Committee Profile** | Overview, statutory positioning, affiliated network, and service scope. Reads dynamically from Firestore `siteConfig/committee`. |
-| `/en/about/organisation` | **Governance & Team** | Council governance, secretariat departments, and leadership responsibilities. Reads dynamically from Firestore `siteConfig/organisation`. |
-| `/en/cooperation` | **Cooperation Hub** | Overview of international collaborative initiatives and operational workflow. |
-| `/en/cooperation/projects` | **Projects Directory** | Search and filter international projects across domains (`smart_mfg`, `green_tech`, `biomedicine`, `ai`, `edutech`) and status (`recruiting`, `ongoing`, `preparing`, `completed`). |
-| `/en/cooperation/enquiry` | **Partnership Enquiry** | Standardized 8-field submission form (institution, country/region, contact, position, email, category, requirement summary, privacy consent) writing securely to Firestore `enquiries`. |
-| `/en/network` | **Network Overview** | Introduction to member university coverage, science park alliances, and regional distribution. |
-| `/en/network/members` | **Member Directory** | Interactive filter by member type (universities, science parks, spin-off enterprises, transfer agencies) and region. |
-| `/en/news` | **News & Insights** | Multi-category news listings (`work_updates`, `events`, `policy_insights`) with pagination support. |
-| `/en/news/[id]` | **News Article Detail** | Full-text article rendering with executive summaries, publication dates, category badges, and graceful 404 handling. |
-| `/en/contact` | **Contact Secretariat** | Official secretariat contact channels, specialized departmental emails, telephone inquiries, and embedded inquiry access. Reads dynamically from Firestore `siteConfig/contact`. |
+| `/en` | **英文综合首页 (Home Portal)** | 顶部 Hero 视觉横幅、专委会使命定位、关键合作指标动态统计、精选国际合作项目轮播、最新工作动态与快捷服务入口。 |
+| `/en/about` | **机构概况导览 (About Index)** | 专委会简介导航总览页，引导访客浏览机构职责与治理机制。 |
+| `/en/about/committee` | **专委会定位 (Committee Profile)** | 介绍机构总览、法定地位、依托网络与服务范畴。前台动态绑定 Cloud Firestore 的 `siteConfig/committee` 文档。 |
+| `/en/about/organisation` | **组织架构与治理 (Organisation & Governance)** | 呈现理事会体制、常设秘书处职能部门分布及专业委员会分工。动态绑定 Cloud Firestore 的 `siteConfig/organisation` 文档。 |
+| `/en/cooperation` | **国际合作中心 (Cooperation Hub)** | 国际产学研合作体系说明与四步标准化合作落地工作流程。 |
+| `/en/cooperation/projects` | **合作项目库 (Projects Directory)** | 支持按技术领域（智能制造、绿色低碳、生物医药、人工智能、教育科技）与项目状态（招募中、进行中、筹备中、已结项）多维筛选，动态拉取 Firestore `projects` 集合。 |
+| `/en/cooperation/enquiry` | **合作意向对接 (Partnership Enquiry)** | 标准化 8 字段对接表单（机构名称、国家地区、联系人、职务、邮箱、合作类型、诉求摘要、隐私协议），经字段白名单校验后安全写入 Firestore `enquiries` 集合。 |
+| `/en/network` | **合作网络总览 (Network Overview)** | 介绍全国重点高校、国家大学科技园与骨干产业网络的辐射广度与区域分布。 |
+| `/en/network/members` | **会员机构名录 (Member Directory)** | 支持按机构性质（高校产业、科技园区、骨干企业、转移机构）与主要地域进行交互筛选，动态拉取 Firestore `members` 集合。 |
+| `/en/news` | **新闻资讯中心 (News & Insights)** | 包含工作动态 (`work_updates`)、会议活动 (`events`)、政策观察 (`policy_insights`) 三大分类切换与分页浏览，动态读取 Firestore `news` 集合。 |
+| `/en/news/[id]` | **新闻全文阅读 (News Detail)** | 动态路由页面，支持核心摘要展示、官方发文信息核验、格式化正文段落排版、返回列表联动及无效 ID 的 404 优雅容错。 |
+| `/en/contact` | **秘书处联络 (Contact Secretariat)** | 官方秘书处各专业部门直线电话、专用电子邮箱、来信渠道与在线对接入口。动态绑定 Cloud Firestore 的 `siteConfig/contact` 文档。 |
 
-### Administration CMS
+### 后台内容管理系统 (Administration CMS)
 
-The administrative backend is located under `/admin`:
+后台管理功能位于 `/admin` 路由体系下，专门服务于英文站日常运营：
 
-- **Authentication Guard (`/admin/login` & `/admin/dashboard/layout.tsx`)**:
-  - Enforces Firebase Authentication via email and password.
-  - Automatically verifies the authenticated user UID against `NEXT_PUBLIC_ADMIN_UID`.
-  - Redirects unauthenticated visitors or non-admin accounts to `/admin/login` within 800ms.
-- **Dashboard Workspace (`/admin/dashboard`)**:
-  - Metric overview displaying live record counts for News, Projects, Members, and Enquiries.
-  - Quick action shortcuts to core management channels.
-- **News Management (`/admin/dashboard/news`)**:
-  - Add, edit, and delete news articles.
-  - Fields: title, publication date, category, summary, content, read time.
-- **Projects Management (`/admin/dashboard/projects`)**:
-  - Add, edit, and delete international cooperation projects.
-  - Fields: title, status, technical field, lead university, international partner, objective, summary, featured badge.
-- **Members Management (`/admin/dashboard/members`)**:
-  - Add, edit, and delete member institution profiles.
-  - Fields: institution name, member type, region, establishment year, description, key focus fields.
-- **Enquiries Management (`/admin/dashboard/enquiries`)**:
-  - View inbound visitor partnership submissions submitted through `/en/cooperation/enquiry`.
-  - Filter by processing status (`pending`, `reviewing`, `contacted`, `archived`).
-  - Update status and review institution details.
-- **Site Configuration (`/admin/dashboard/profile`)**:
-  - Unified 3-tab editor managing global institutional documents:
-    - Tab 1: Committee Profile (`siteConfig/committee`)
-    - Tab 2: Governance & Leadership (`siteConfig/organisation`)
-    - Tab 3: Official Contact Channels (`siteConfig/contact`)
-  - Direct real-time persistence to Cloud Firestore.
+- **安全认证与权限守卫 (`/admin/login` & `/admin/dashboard/layout.tsx`)**：
+  - 基于 Firebase Authentication 提供邮箱与密码双重认证。
+  - 严密校验登录用户的 UID 是否匹配环境变量 `NEXT_PUBLIC_ADMIN_UID`。
+  - 未登录访客或非管理员账号访问受保护的 `/admin/dashboard/*` 页面时，系统将在 800ms 内自动重定向至 `/admin/login`。
+- **控制台工作台 (`/admin/dashboard`)**：
+  - 实时统计并展示新闻资讯、国际项目、会员网络及合作意向 4 大业务对象的最新数据规模与监控快捷卡片。
+- **新闻资讯管理 (`/admin/dashboard/news`)**：
+  - 支持新增、编辑、删除新闻，维护标题、日期、分类标签、核心摘要、全文正文及阅读时长。
+- **合作项目管理 (`/admin/dashboard/projects`)**：
+  - 维护跨国合作项目全生命周期，支持设置牵头高校、外方机构、合作目标、所属技术领域与项目阶段状态。
+- **会员网络管理 (`/admin/dashboard/members`)**：
+  - 维护中国高校科技园与产业会员档案，录入机构分类、所在省市、成立年份、业务简介与核心学科方向。
+- **合作意向管理 (`/admin/dashboard/enquiries`)**：
+  - 查看前台访客提交的合作意向工单，支持按状态（待处理 `pending`、初审中 `reviewing`、已对接 `contacted`、已归档 `archived`）进行流转办理。
+- **站点与组织配置 (`/admin/dashboard/profile`)**：
+  - 三栏式表单编辑器，分别维护专委会定位（`siteConfig/committee`）、组织架构（`siteConfig/organisation`）与联络专线（`siteConfig/contact`），提交后即时在云端 Firestore 生效。
 
 ---
 
-## Technology Stack
+## 技术栈选型 (Technology Stack)
 
-| Layer | Technology | Details |
+| 体系分层 (Layer) | 选型技术 (Technology) | 版本与架构说明 (Details) |
 | :--- | :--- | :--- |
-| **Framework** | **Next.js 16.3.5** | App Router, React Server Components (RSC), Turbopack compilation |
-| **UI Library** | **React 19.2.8** | Modern React with hooks-driven state architecture |
-| **Language** | **TypeScript 5.x** | Strict static typing across data contracts and component props |
-| **Styling** | **Tailwind CSS v4** | Modern CSS-first utility styling via `@tailwindcss/postcss` |
-| **Database** | **Cloud Firestore** | NoSQL document database (Firebase SDK v12 client-side) |
-| **Authentication**| **Firebase Auth** | Email/Password admin authentication with UID-level access control |
-| **Admin Scripting**| **Firebase Admin SDK** | Node.js v14 Admin SDK for seed automation and integrity verification |
+| **基础核心框架** | **Next.js** | `v16.3.5`（App Router 架构，Turbopack 极速编译引擎） |
+| **前端视图库** | **React** | `v19.2.8`（Hooks 状态驱动，React Server Components 服务端组件） |
+| **开发编程语言** | **TypeScript** | `v5.x`（前后端数据模型强类型约束，契约级接口规范） |
+| **原子化样式** | **Tailwind CSS** | `v4.x`（基于 `@tailwindcss/postcss`，现代科技政务蓝视觉规范） |
+| **云端文档数据库** | **Cloud Firestore** | Google Firebase 分布式 NoSQL 文档数据库，支持客户端毫秒级读取与订阅 |
+| **身份认证安全** | **Firebase Auth** | 生产级管理员身份认证体系，UID 级精确访问控制 |
+| **本地管理工具** | **Firebase Admin SDK** | `v14.5.0`，用于高特权 CLI 脚本安全执行可信数据初始化与自动化验证 |
 
 ---
 
-## Project Structure
+## 项目目录结构 (Project Structure)
 
 ```text
 companysite-en/
-├── app/
-│   ├── layout.tsx                     # Global HTML root layout
-│   ├── page.tsx                       # Root redirect / landing entry
-│   ├── globals.css                    # Global CSS & Tailwind imports
-│   ├── en/                            # Public English Portal
-│   │   ├── layout.tsx                 # English layout with EnglishHeader and EnglishFooter
-│   │   ├── page.tsx                   # English Portal Homepage
-│   │   ├── about/                     # About section routes
-│   │   │   ├── page.tsx               # About index
-│   │   │   ├── committee/page.tsx     # Committee profile & mandate
-│   │   │   └── organisation/page.tsx  # Governance & department structure
-│   │   ├── cooperation/               # Cooperation section routes
-│   │   │   ├── page.tsx               # Cooperation index
-│   │   │   ├── projects/page.tsx      # International project directory
-│   │   │   └── enquiry/page.tsx       # Standardized partnership inquiry form
-│   │   ├── network/                   # Member network routes
-│   │   │   ├── page.tsx               # Network index
-│   │   │   └── members/page.tsx       # Member institution directory
-│   │   ├── news/                      # News & Insights routes
-│   │   │   ├── page.tsx               # News listing with categories & pagination
-│   │   │   └── [id]/page.tsx          # Dynamic news article reader
-│   │   └── contact/                   # Contact route
-│   │       └── page.tsx               # Official contact channels
-│   └── admin/                         # Administration CMS
-│       ├── login/page.tsx             # Firebase Auth administrator login
-│       └── dashboard/                 # Protected admin workspace
-│           ├── layout.tsx             # Admin sidebar layout & auth guard
-│           ├── page.tsx               # Operational metrics overview
-│           ├── news/page.tsx          # News articles manager
-│           ├── projects/page.tsx      # Projects manager
-│           ├── members/page.tsx       # Members manager
-│           ├── enquiries/page.tsx     # Partnership enquiries manager
-│           └── profile/page.tsx       # SiteConfig manager (Committee / Org / Contact)
+├── app/                               # Next.js App Router 根路由
+│   ├── layout.tsx                     # 全局根布局 (含全站元数据与 Favicon)
+│   ├── page.tsx                       # 根路径访问处理
+│   ├── globals.css                    # Tailwind CSS v4 样式定义
+│   ├── en/                            # 英文公共门户模块
+│   │   ├── layout.tsx                 # 英文门户专属布局 (集成 EnglishHeader 与 EnglishFooter)
+│   │   ├── page.tsx                   # 英文首页
+│   │   ├── about/                     # 机构介绍模块
+│   │   │   ├── page.tsx               # 机构概况
+│   │   │   ├── committee/page.tsx     # 专委会法定定位 (动态读取 siteConfig/committee)
+│   │   │   └── organisation/page.tsx  # 组织架构与职责 (动态读取 siteConfig/organisation)
+│   │   ├── cooperation/               # 国际合作模块
+│   │   │   ├── page.tsx               # 合作总览
+│   │   │   ├── projects/page.tsx      # 合作项目检索与筛选
+│   │   │   └── enquiry/page.tsx       # 合作意向表单
+│   │   ├── network/                   # 会员网络模块
+│   │   │   ├── page.tsx               # 网络总览
+│   │   │   └── members/page.tsx       # 会员目录检索与筛选
+│   │   ├── news/                      # 新闻资讯模块
+│   │   │   ├── page.tsx               # 新闻列表与分类分页
+│   │   │   └── [id]/page.tsx          # 新闻全文详情动态路由
+│   │   └── contact/                   # 官方联络
+│   │       └── page.tsx               # 秘书处联络方式 (动态读取 siteConfig/contact)
+│   └── admin/                         # 后台管理 CMS 模块
+│       ├── login/page.tsx             # Firebase 认证登录页
+│       └── dashboard/                 # 受保护的管理工作台
+│           ├── layout.tsx             # 后台侧边栏布局与 Auth Guard 守卫
+│           ├── page.tsx               # 运营指标概览
+│           ├── news/page.tsx          # 新闻资讯管理
+│           ├── projects/page.tsx      # 合作项目管理
+│           ├── members/page.tsx       # 会员网络管理
+│           ├── enquiries/page.tsx     # 合作意向管理
+│           └── profile/page.tsx       # 站点配置管理 (专委会/架构/联系)
 ├── components/
-│   └── en/                            # English Portal components
-│       ├── EnglishHeader.tsx          # Top navigation bar
-│       ├── EnglishFooter.tsx          # Multi-column footer with legal disclaimers
-│       ├── InquiryForm.tsx            # Form component with validation & Firestore write
-│       ├── NewsCard.tsx               # News listing card
-│       ├── ProjectCard.tsx            # Project showcase card
-│       ├── MemberCard.tsx             # Member directory card
-│       ├── FilterBar.tsx              # Interactive filter controls
-│       ├── ProcessSteps.tsx           # Step-by-step collaboration workflow
-│       ├── FAQ.tsx                    # Frequently asked questions accordion
-│       └── ...                        # Supporting layout widgets
+│   └── en/                            # 英文门户复用 UI 组件
+│       ├── EnglishHeader.tsx          # 顶部主导航栏
+│       ├── EnglishFooter.tsx          # 页脚声明与版权
+│       ├── InquiryForm.tsx            # 合作意向表单组件
+│       ├── NewsCard.tsx               # 新闻卡片组件
+│       ├── ProjectCard.tsx            # 项目卡片组件
+│       ├── MemberCard.tsx             # 会员卡片组件
+│       ├── FilterBar.tsx              # 分类筛选控制器
+│       ├── ProcessSteps.tsx           # 合作流程组件
+│       └── FAQ.tsx                    # 常见疑问解答组件
 ├── lib/
-│   ├── firebase.ts                    # Firebase App, Auth, and Firestore client initialization
-│   ├── enFirestore.ts                 # Firestore queries, mutations, and data normalization
-│   └── enData.ts                      # Baseline data models, constants, and fallback prototypes
+│   ├── firebase.ts                    # Firebase Web SDK 客户端初始化
+│   ├── enFirestore.ts                 # Firestore 数据操作与归一化逻辑
+│   └── enData.ts                      # 英文站基线数据模型、常量与本地 Fallback
 ├── scripts/
-│   ├── seed-en-firestore.mjs          # Admin SDK baseline database seeder
-│   └── verify-acceptance.mjs         # Acceptance test script verifying Firestore rules and reads
-├── firestore.rules                    # Cloud Firestore Security Rules for cauiice-site-en
-├── next.config.ts                     # Next.js configuration
-├── tsconfig.json                      # TypeScript configuration
-├── package.json                       # Project dependencies and script definitions
-└── .gitignore                         # Git exclusion rules (credentials, .env, .next)
+│   ├── seed-en-firestore.mjs          # Admin SDK 基础数据安全初始化脚本
+│   └── verify-acceptance.mjs         # 自动化验收验证脚本 (校验数据与安全规则)
+├── firestore.rules                    # Cloud Firestore 安全规则文件
+├── next.config.ts                     # Next.js 配置文件
+├── tsconfig.json                      # TypeScript 配置文件
+├── package.json                       # 项目依赖与 Scripts 指令
+└── .gitignore                         # Git 忽略文件规则
 ```
 
 ---
 
-## Requirements
+## 环境依赖要求 (Requirements)
 
-Before running the project locally, ensure your environment meets the following specifications:
+在本地运行或构建本项目前，请确保本地计算机已安装以下环境：
 
-- **Node.js**: `>= 18.18.0` (LTS `20.x` or `22.x` recommended; fully compatible with Node.js `24.x`).
-- **npm**: `>= 9.x` (or `pnpm` / `yarn`).
-- **Modern Browser**: Chromium-based (Chrome, Edge) or Firefox with modern ES2022+ and WebSocket support.
+- **Node.js**：`>= 18.18.0`（推荐使用 Node.js LTS `20.x` 或 `22.x`，实测完全兼容 Node.js `24.x`）。
+- **包管理器**：`npm >= 9.x`（亦可使用 `pnpm` 或 `yarn`）。
+- **浏览器**：主流现代浏览器（Google Chrome、Microsoft Edge、Mozilla Firefox 等）。
 
 ---
 
-## Installation and Local Development
+## 本地安装与开发 (Installation & Local Development)
 
-### 1. Clone the Repository
+### 1. 克隆代码仓库
 
 ```bash
-git clone https://github.com/<your-org>/cauiice-site-en.git
+git clone https://github.com/ziluyu19/cauiice-site-en.git
 cd cauiice-site-en
 ```
 
-### 2. Install Dependencies
+### 2. 安装项目依赖
 
 ```bash
 npm install
 ```
 
-### 3. Configure Local Environment Variables
+### 3. 配置本地环境变量
 
-Create a `.env.local` file in the project root:
+在项目根目录下创建 `.env.local` 文件：
 
 ```bash
-# On Linux / macOS
+# Linux / macOS 环境
 cp .env.example .env.local
 
-# On Windows PowerShell
+# Windows PowerShell 环境
 Copy-Item .env.example .env.local
 ```
 
-Populate `.env.local` with your development Firebase project credentials (see [Environment Variables](#environment-variables)).
+使用文本编辑器打开 `.env.local`，填入您的 Firebase 开发者配置参数（参考下文 [环境变量配置](#环境变量配置-environment-variables)）。
 
-### 4. Start Development Server
+### 4. 启动本地开发服务器
 
 ```bash
 npm run dev
 ```
 
-The application will boot on `http://localhost:3000` (or `http://localhost:3001` if port 3000 is occupied):
+启动成功后，在浏览器中访问：
 
-- **English Public Portal**: [http://localhost:3000/en](http://localhost:3000/en)
-- **Admin CMS Dashboard**: [http://localhost:3000/admin/dashboard](http://localhost:3000/admin/dashboard)
-- **Admin Login Portal**: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
+- **前台英文门户**：[http://localhost:3000/en](http://localhost:3000/en)
+- **后台管理控制台**：[http://localhost:3000/admin/dashboard](http://localhost:3000/admin/dashboard)
+- **管理员登录页**：[http://localhost:3000/admin/login](http://localhost:3000/admin/login)
+
+*(若本地 3000 端口已被占用，Next.js 会自动切换至 3001 端口)*
 
 ---
 
-## Environment Variables
+## 环境变量配置 (Environment Variables)
 
-The application relies on the following environment variables. None of these contain private keys or secrets suitable for client exposure. **Never commit `.env.local` to Git.**
+系统通过 `.env.local` 读取 Firebase 与管理权限配置。以下为代码中实际调用的环境变量清单：
 
-| Variable Name | Required | Description |
+| 环境变量名称 (Variable Name) | 必填性 (Required) | 用途说明 (Description) |
 | :--- | :---: | :--- |
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | **Yes** | Firebase Web API key for the dedicated English project |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | **Yes** | Firebase Auth domain (e.g., `<project-id>.firebaseapp.com`) |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | **Yes** | Firebase Project ID (`cauiice-site-en`) |
-| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | **Yes** | Cloud Storage bucket address |
-| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | **Yes** | Firebase Cloud Messaging Sender ID |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | **Yes** | Firebase Web Application ID |
-| `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | Optional | Google Analytics Measurement ID (`G-XXXXXXXXXX`) |
-| `NEXT_PUBLIC_ADMIN_UID` | **Yes** | UID of the authorized administrator in Firebase Auth |
-| `GOOGLE_APPLICATION_CREDENTIALS` | Optional | Local file path to service account JSON (CLI scripts only) |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | **必填** | Firebase Web API 访问密钥 |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | **必填** | Firebase 认证授权域名 (`<project-id>.firebaseapp.com`) |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | **必填** | 英文站专用 Firebase 项目 ID (`cauiice-site-en`) |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | **必填** | Firebase Storage 存储桶地址 |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | **必填** | Firebase 云推送发送方 ID |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | **必填** | Firebase Web 应用程序 App ID |
+| `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | 可选 | Google Analytics 网站分析统计 ID (`G-XXXXXXXXXX`) |
+| `NEXT_PUBLIC_ADMIN_UID` | **必填** | 经授权的管理员账号 UID（与 Firebase Auth 和安全规则联动） |
+| `GOOGLE_APPLICATION_CREDENTIALS` | 可选 | 本地服务账号 JSON 凭据路径（仅供本地 Admin CLI 脚本使用） |
 
-### Sample `.env.example` Template
+### 环境变量参考模板 (`.env.example`)
+
+> [!WARNING]
+> `.env.local` 属于受忽略的本地敏感文件，**严禁提交至公共 Git 仓库**。请仅使用占位符示例：
 
 ```env
-# Firebase Web Client Configuration (Project: cauiice-site-en)
+# Firebase Web 客户端配置 (专用项目: cauiice-site-en)
 NEXT_PUBLIC_FIREBASE_API_KEY="your-firebase-web-api-key"
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="cauiice-site-en.firebaseapp.com"
 NEXT_PUBLIC_FIREBASE_PROJECT_ID="cauiice-site-en"
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="cauiice-site-en.firebasestorage.app"
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
-NEXT_PUBLIC_FIREBASE_APP_ID="your-web-app-id"
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="your-messaging-sender-id"
+NEXT_PUBLIC_FIREBASE_APP_ID="your-firebase-web-app-id"
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="G-XXXXXXXXXX"
 
-# Authorized Administrator UID in cauiice-site-en Firebase Auth
+# 经授权的管理员 UID (在 cauiice-site-en 的 Firebase Console 中生成)
 NEXT_PUBLIC_ADMIN_UID="your-authorized-admin-uid"
 ```
 
 ---
 
-## Firebase Configuration
+## Firebase 云端配置与数据层 (Firebase Configuration)
 
-### Dedicated Project
+### 独立云端项目 (Dedicated Project)
 
-The English website connects exclusively to its independent Firebase project: **`cauiice-site-en`**. It is strictly separated from any Chinese portal databases, ensuring isolated security boundaries and localized content lifecycles.
+英文网站全面连接独立的专用 Firebase 云端项目：**`cauiice-site-en`**。与中文站数据库完全物理隔离，互不干扰，确保数据生命周期与权限边界清晰独立。
 
-### Firestore Collections
+### Firestore 集合架构 (Firestore Collections)
 
-The Firestore schema is structured into 5 collections:
+数据库划分为 5 个核心集合：
 
-1. **`news`**: News and insights articles.
-   - Public read; admin-only write.
-2. **`projects`**: International cooperation projects.
-   - Public read; admin-only write.
-3. **`members`**: Member directory records.
-   - Public read; admin-only write.
-4. **`siteConfig`**: Global configuration documents (`committee`, `organisation`, `contact`).
-   - Public read; admin-only write.
-5. **`enquiries`**: Visitor partnership inquiries submitted from `/en/cooperation/enquiry`.
-   - Public create with strict field whitelist and length validation (`<= 4000` chars).
-   - Read, update, and delete are strictly restricted to authenticated administrators.
+1. **`news`（新闻资讯）**：存储涉外工作动态与智库观察。
+   - 读取权限：全网公开读取 (`allow read: if true;`)
+   - 写入权限：仅限已认证管理员 (`allow write: if isAdmin();`)
+2. **`projects`（合作项目）**：存储跨国合作与对接项目。
+   - 读取权限：全网公开读取
+   - 写入权限：仅限已认证管理员
+3. **`members`（会员机构）**：存储高校科技园与会员名录。
+   - 读取权限：全网公开读取
+   - 写入权限：仅限已认证管理员
+4. **`siteConfig`（站点配置）**：存储专委会介绍、组织架构、联系方式等机构级全局文档。
+   - 固定文档：`committee`、`organisation`、`contact`
+   - 读取权限：全网公开读取
+   - 写入权限：仅限已认证管理员
+5. **`enquiries`（合作意向与询盘）**：存储前台访客提交的需求信息。
+   - 写入权限：全网访客可提交，实施白名单字段限制与长度校验（`size() <= 4000`）。
+   - 查看与流转权限：**严禁公开读取，仅限管理员查看、更新与删除**。
 
-### Security Rules Overview
+### 安全规则概述 (Security Rules)
 
-The repository includes [`firestore.rules`](file:///d:/companysite-en/firestore.rules). Key security characteristics:
+项目根目录包含 [`firestore.rules`](file:///d:/companysite-en/firestore.rules)，安全规则具备以下设计：
 
-- **Admin Check**:
+- **管理员身份校验**：
   ```javascript
   function isAdmin() {
-    return request.auth != null && request.auth.uid == '<configured-admin-uid>';
+    return request.auth != null && request.auth.uid == '<配置的管理员UID>';
   }
   ```
-- **Inquiry Whitelist**: Rejects any submission containing unexpected or malicious fields.
-- **Default Deny**: Any collection or sub-collection not explicitly whitelisted is denied access:
+- **询盘白名单防御**：禁止任何非白名单字段注入。
+- **默认全盘拒绝 (Default Deny)**：未显式声明规则的集合一律默认拒绝读写：
   ```javascript
   match /{document=**} {
     allow read, write: if false;
   }
   ```
 
-### Data Seeding Script
+### 基础数据初始化脚本 (Data Seeding Script)
 
-To initialize baseline test records in `cauiice-site-en`:
+若需要在 `cauiice-site-en` 中建立基线测试数据：
 
-1. Download a temporary Service Account Key JSON from the Firebase Console (`Project Settings > Service Accounts`).
-2. Place it locally in the project root as `service-account.json` (already ignored by `.gitignore`).
-3. Run the seed script:
+1. 在 Firebase 控制台（项目设置 -> 服务账号）生成临时服务账号密钥文件。
+2. 将文件保存为本地根目录下的 `service-account.json`（已被 `.gitignore` 自动忽略）。
+3. 运行初始化脚本：
    ```bash
    node scripts/seed-en-firestore.mjs
    ```
-4. Verify that 4 news articles, 4 projects, 7 members, and 3 site configuration documents are seeded.
-5. **Immediately delete `service-account.json`** from your local filesystem and revoke the temporary key in Firebase Console if no longer needed.
+4. 脚本将安全写入：新闻 4 条、合作项目 4 条、会员 7 条、站点配置 3 条。
+5. **初始化完成后，必须立即从本地删除该服务账号 JSON 文件，并在控制台中注销对应临时密钥**。
 
 ---
 
-## Administrator Access
+## 管理员权限与后台访问 (Administrator Access)
 
-- **Login Entrance**: `/admin/login`
-- **Authentication Flow**:
-  1. The administrator enters credentials (email and password registered in Firebase Authentication under `cauiice-site-en`).
-  2. The system calls `signInWithEmailAndPassword`.
-  3. Upon successful credential validation, the client checks `user.uid === process.env.NEXT_PUBLIC_ADMIN_UID`.
-  4. If the UID matches, the user is redirected to `/admin/dashboard`.
-  5. If the UID does not match, the session is immediately signed out with a permission denied notice.
+- **后台入口**：`/admin/login`
+- **认证流程**：
+  1. 管理员输入在 `cauiice-site-en` 认证中心注册的邮箱与密码。
+  2. 客户端调用 Firebase Auth 的 `signInWithEmailAndPassword` 校验凭据。
+  3. 认证成功后，系统校验 `user.uid === process.env.NEXT_PUBLIC_ADMIN_UID`。
+  4. 验证通过后进入管理后台；若 UID 不匹配，系统将自动登出并提示无管理员权限。
 
 > [!IMPORTANT]
-> The repository **does not and must not** contain hardcoded administrator credentials. Administrator accounts must be created directly in the Firebase Console under `Authentication > Users`.
+> 代码仓库**不包含且禁止包含**任何硬编码的管理员账号密码。管理员账号需在 Firebase Console 的 `Authentication` 模块中创建。
 
 ---
 
-## Build and Validation
+## 项目构建与测试验证 (Build & Validation)
 
-### Production Build
+### 生产环境构建
 
-Run the standard Next.js build:
+执行 Next.js 生产优化构建：
 
 ```bash
 npm run build
 ```
 
-This performs TypeScript type verification and static/dynamic page generation.
+该命令将执行 TypeScript 类型检查、样式压缩打包与全站 32 个页面的静态/动态优化生成。
 
-### Acceptance and Integrity Verification
+### 自动化验收测试
 
-A validation script is provided to verify Firestore data access and security rule enforcement against `cauiice-site-en`:
+本地提供自动化验收脚本，用于核验数据读取完整性与安全规则防越权拦截能力：
 
 ```bash
 node scripts/verify-acceptance.mjs
 ```
 
-### Verification Status Summary
+### 功能验证状态对照表
 
-| Item | Status | Verification Method |
+| 验证项 (Item) | 实际状态 (Status) | 验证方式与细节 (Verification Method) |
 | :--- | :---: | :--- |
-| **Real Browser News Navigation** | **Verified** | Automated Edge CDP test: clicked "查看全文", verified `/en/news/[id]` DOM rendering, back navigation, refresh, and 404 handling. |
-| **Public Inquiry Submission** | **Verified** | Real browser form completion on `/en/cooperation/enquiry` successfully writes to Firestore and triggers confirmation view. |
-| **Unauthenticated Enquiries Read** | **Verified** | Confirmed rejected with `permission-denied` via security rules. |
-| **Unauthenticated Content Write** | **Verified** | Writing to `news`, `projects`, `siteConfig` without admin auth confirmed rejected with `permission-denied`. |
-| **Auth Guard Interception** | **Verified** | Accessing `/admin/dashboard` unauthenticated redirects to `/admin/login`. |
-| **Admin Content Mutations (Add/Edit/Del)** | *Requires Manual Admin Login* | Admin writes require manual login via `/admin/login` using confidential administrator credentials. |
+| **真实浏览器新闻详情点击与跳转** | **已实测通过** | 通过 Edge CDP 进行真实视口点击，进入 `/en/news/[id]`，验证 H1、摘要、正文、返回按钮与 404 容错。 |
+| **前台合作意向表单提交流程** | **已实测通过** | 在 `/en/cooperation/enquiry` 真实填写并提交，前台渲染成功屏，记录正确落盘至 Firestore。 |
+| **敏感询盘防越权未认证拦截** | **已实测通过** | 未认证调用 `getDocs(collection(db, 'enquiries'))`，被安全规则拦截并返回 `permission-denied`。 |
+| **内容防越权未认证写入拦截** | **已实测通过** | 未认证调用 `setDoc` 写入 `news` / `projects` / `siteConfig`，被拦截并返回 `permission-denied`。 |
+| **后台未登录权限守卫拦截** | **已实测通过** | 真实浏览器未登录访问 `/admin/dashboard`，被自动重定向至 `/admin/login`。 |
+| **生产打包构建 (npm run build)** | **已实测通过** | Next.js 16.3.5 Turbopack 编译通过，TypeScript 检查 0 报错，页面成功生成。 |
+| **后台内容管理闭环 (增/改/删)** | *需人工登录验证* | 云端安全规则绑定管理员私有凭证，需在 `/admin/login` 凭真实管理员账号密码登录后实测。 |
 
 ---
 
-## Security Notes
+## 安全合规守则 (Security Notes)
 
-1. **Credential Hygiene**: Never commit `.env.local`, `.env.*.local`, service account JSON files (`*service-account*.json`), or private keys to version control.
-2. **Access Control**: Keep `NEXT_PUBLIC_ADMIN_UID` synchronized between `.env.local` and `firestore.rules` on the cloud.
-3. **Data Protection**: Inbound partnership enquiries contain contact information and institution names. The security rules strictly forbid unauthenticated reading of the `enquiries` collection.
-4. **Least Privilege**: The client-side application only uses the Firebase Web SDK with restricted API keys. Administrative operations require explicit user authentication.
-
----
-
-## Deployment Status and Future Roadmap
-
-### Current Status
-
-- **Development & Staging Verified**: The codebase has passed full local verification, CDP browser automation, data read tests on `cauiice-site-en`, and successful Next.js production builds.
-- **Production Hosting**: **Not yet deployed to public production hosting**.
-
-### Future Roadmap
-
-- [ ] Connect production hosting infrastructure (e.g., Firebase App Hosting or Vercel).
-- [ ] Configure custom institutional domain and SSL certificates.
-- [ ] Implement multi-language localization switcher (English / Chinese).
-- [ ] Set up automated CI/CD workflows for pull request validation and build checks.
+1. **凭证隔离与防泄漏**：严禁将包含真实私钥的 `.env.local` 或服务账号密钥（`*service-account*.json`）提交至 Git 代码仓库。
+2. **权限对齐**：确保云端 `firestore.rules` 中的管理员 UID 与 `.env.local` 中的 `NEXT_PUBLIC_ADMIN_UID` 保持一致。
+3. **隐私信息保护**：前台合作意向包含机构联络人姓名、职位与邮箱，严格遵循云端安全规则，绝不向未认证公众暴露 `enquiries` 集合读取接口。
+4. **最小特权原则**：客户端代码仅使用受限的 Firebase Web API 权限，所有高风险管理行为均需通过身份鉴权后执行。
 
 ---
 
-## License and Disclaimer
+## 部署状态与后续规划 (Deployment Status & Roadmap)
 
-1. **Statutory Status**: The International Cooperation and Exchange Committee (CAUIICE / 国专委) is an official branch committee of the Chinese Association of University-run Industries (CAUI).
-2. **Copyright**: &copy; 2026 International Cooperation and Exchange Committee of CAUIICE. All rights reserved.
-3. **Usage**: This codebase is private and maintained for official institutional use.
+### 当前状态 (Current Status)
+
+- **本地开发与联调完毕**：系统已完成前后台功能对齐、冗余模块剥离、真实浏览器点击测试、安全规则验证与生产打包构建。
+- **公网部署状态**：**尚未部署至生产托管平台**（如 Firebase App Hosting、Vercel 或独立云服务器）。
+
+### 后续规划 (Roadmap)
+
+- [ ] 接入生产托管环境（Firebase App Hosting / 云服务器容器化部署）。
+- [ ] 绑定正式机构独立域名与配置 SSL 安全证书。
+- [ ] 完善中英文双语前台一键切换联动机制。
+- [ ] 接入自动化 CI/CD 流水线，实施代码提交与构建自动化检查。
+
+---
+
+## 知识产权与法定声明 (License & Disclaimer)
+
+1. **机构性质说明**：中国高校校办产业协会国际合作与交流专业委员会（CAUIICE）系中国高校校办产业协会所属分支机构，非独立法人社会团体。
+2. **版权声明**：&copy; 2026 中国高校校办产业协会国际合作与交流专业委员会 版权所有 (All Rights Reserved)。
+3. **软件授权**：本系统源代码归专委会专属所有，主要用于官方数字化建设与运营维护。
