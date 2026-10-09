@@ -7,8 +7,8 @@ import { usePathname } from "next/navigation";
 export default function Footer() {
   const pathname = usePathname();
 
-  // 后台管理页面无需渲染前台页脚
-  if (pathname?.startsWith("/admin")) {
+  // 后台管理页面与英文前台页面无需渲染中文页脚
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/en")) {
     return null;
   }
 

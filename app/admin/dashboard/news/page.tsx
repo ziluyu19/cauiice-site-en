@@ -21,6 +21,7 @@ interface NewsItem {
   date: string;
   summary: string;
   content: string;
+  published?: boolean;
   createdAt?: any;
 }
 
@@ -39,10 +40,11 @@ export default function AdminNewsPage() {
   // 表单输入项
   const [formData, setFormData] = useState({
     title: '',
-    category: '国专委要闻',
+    category: 'work_updates',
     date: new Date().toISOString().split('T')[0],
     summary: '',
     content: '',
+    published: true,
   });
   const [channelFilter, setChannelFilter] = useState('全部');
   const [submitting, setSubmitting] = useState(false);
@@ -76,8 +78,9 @@ export default function AdminNewsPage() {
             return {
               id: docSnap.id,
               ...data,
+              published: data.published !== undefined ? data.published : true,
               category: (
-                data.category === '专委会动态' ? '国专委动态' : (data.category || '国专委动态')
+                data.category === '专委会动态' ? '国专委动态' : (data.category || 'work_updates')
               ).replace(/专委会/g, '国专委'),
             };
           });
@@ -95,8 +98,9 @@ export default function AdminNewsPage() {
                 return {
                   id: docSnap.id,
                   ...data,
+                  published: data.published !== undefined ? data.published : true,
                   category: (
-                    data.category === '专委会动态' ? '国专委动态' : (data.category || '国专委动态')
+                    data.category === '专委会动态' ? '国专委动态' : (data.category || 'work_updates')
                   ).replace(/专委会/g, '国专委'),
                 };
               });
@@ -125,48 +129,48 @@ export default function AdminNewsPage() {
 
   // 统计各核心频道新闻数量
   const committeeCount = newsList.filter(
-    (i) => i.category === '国专委要闻' || i.category === '国专委动态' || i.category === '会议纪要' || !i.category
+    (i) => i.category === 'work_updates' || i.category === '国专委要闻' || i.category === '国专委动态' || i.category === '会议纪要' || !i.category
   ).length;
   const memberCount = newsList.filter(
-    (i) => i.category === '会员单位动态' || i.category === '行业热点' || i.category === '成果转化' || i.category === '国际合作'
+    (i) => i.category === 'events' || i.category === '重点活动' || i.category === '会员单位动态' || i.category === '行业热点' || i.category === '成果转化' || i.category === '国际合作'
   ).length;
   const mediaCount = newsList.filter(
-    (i) => i.category === '媒体关注与报道' || i.category === '媒体关注' || i.category === '媒体报道'
+    (i) => i.category === 'policy_insights' || i.category === '政策洞察' || i.category === '媒体关注与报道' || i.category === '媒体关注' || i.category === '媒体报道'
   ).length;
 
   // 根据当前选中的频道筛选新闻列表
   const filteredNews = newsList.filter((item) => {
     if (channelFilter === '全部') return true;
-    if (channelFilter === '国专委要闻') {
-      return item.category === '国专委要闻' || item.category === '国专委动态' || item.category === '会议纪要' || !item.category;
+    if (channelFilter === 'work_updates' || channelFilter === '国专委要闻') {
+      return item.category === 'work_updates' || item.category === '国专委要闻' || item.category === '国专委动态' || item.category === '会议纪要' || !item.category;
     }
-    if (channelFilter === '会员单位动态') {
-      return item.category === '会员单位动态' || item.category === '行业热点' || item.category === '成果转化' || item.category === '国际合作';
+    if (channelFilter === 'events' || channelFilter === '会员单位动态') {
+      return item.category === 'events' || item.category === '重点活动' || item.category === '会员单位动态' || item.category === '行业热点' || item.category === '成果转化' || item.category === '国际合作';
     }
-    if (channelFilter === '媒体关注与报道') {
-      return item.category === '媒体关注与报道' || item.category === '媒体关注' || item.category === '媒体报道';
+    if (channelFilter === 'policy_insights' || channelFilter === '媒体关注与报道') {
+      return item.category === 'policy_insights' || item.category === '政策洞察' || item.category === '媒体关注与报道' || item.category === '媒体关注' || item.category === '媒体报道';
     }
     return item.category === channelFilter;
   });
 
   // 获取分类徽章样式
   const getCategoryBadge = (category: string) => {
-    const cat = category === '专委会动态' ? '国专委动态' : (category || '国专委要闻');
-    if (cat === '国专委要闻' || cat === '国专委动态' || cat === '会议纪要') {
+    const cat = category === '专委会动态' ? '国专委动态' : (category || 'work_updates');
+    if (cat === 'work_updates' || cat === '国专委要闻' || cat === '国专委动态' || cat === '会议纪要') {
       return {
-        label: cat,
+        label: cat === 'work_updates' ? 'Work Updates (工作进展)' : cat,
         className: 'bg-blue-100 text-blue-900 border-blue-200',
       };
     }
-    if (cat === '会员单位动态' || cat === '行业热点' || cat === '成果转化' || cat === '国际合作') {
+    if (cat === 'events' || cat === '重点活动' || cat === '会员单位动态' || cat === '行业热点' || cat === '成果转化' || cat === '国际合作') {
       return {
-        label: cat,
+        label: cat === 'events' ? 'Events (重点活动)' : cat,
         className: 'bg-emerald-100 text-emerald-900 border-emerald-200',
       };
     }
-    if (cat === '媒体关注与报道' || cat === '媒体关注' || cat === '媒体报道') {
+    if (cat === 'policy_insights' || cat === '政策洞察' || cat === '媒体关注与报道' || cat === '媒体关注' || cat === '媒体报道') {
       return {
-        label: cat,
+        label: cat === 'policy_insights' ? 'Policy Insights (政策洞察)' : cat,
         className: 'bg-purple-100 text-purple-900 border-purple-200',
       };
     }
@@ -181,10 +185,11 @@ export default function AdminNewsPage() {
     setEditingItem(null);
     setFormData({
       title: '',
-      category: channelFilter !== '全部' ? channelFilter : '国专委要闻',
+      category: channelFilter !== '全部' ? channelFilter : 'work_updates',
       date: new Date().toISOString().split('T')[0],
       summary: '',
       content: '',
+      published: true,
     });
     setIsModalOpen(true);
   };
@@ -194,12 +199,27 @@ export default function AdminNewsPage() {
     setEditingItem(item);
     setFormData({
       title: item.title || '',
-      category: item.category === '专委会动态' ? '国专委动态' : (item.category || '国专委要闻'),
+      category: item.category || 'work_updates',
       date: item.date || new Date().toISOString().split('T')[0],
       summary: item.summary || '',
       content: item.content || '',
+      published: item.published !== false,
     });
     setIsModalOpen(true);
+  };
+
+  // 快捷切换发布状态
+  const handleTogglePublished = async (item: NewsItem) => {
+    try {
+      const nextPublished = item.published === false;
+      await updateDoc(doc(db, 'news', item.id), {
+        published: nextPublished,
+        updatedAt: serverTimestamp(),
+      });
+      showToast(`已${nextPublished ? '发布上线' : '转为草稿下线'}`);
+    } catch (err: any) {
+      showToast(`切换状态失败：${err?.message || '请重试'}`, 'error');
+    }
   };
 
   // 提交表单（新建或更新）
@@ -214,26 +234,27 @@ export default function AdminNewsPage() {
     try {
       const autoSummary = formData.summary.trim() || formData.content.trim().slice(0, 100);
 
+      const payload = {
+        title: formData.title.trim(),
+        category: formData.category,
+        date: formData.date,
+        summary: autoSummary,
+        content: formData.content.trim(),
+        published: Boolean(formData.published),
+      };
+
       if (editingItem) {
         // 更新现有文档
         const docRef = doc(db, 'news', editingItem.id);
         await updateDoc(docRef, {
-          title: formData.title.trim(),
-          category: formData.category,
-          date: formData.date,
-          summary: autoSummary,
-          content: formData.content.trim(),
+          ...payload,
           updatedAt: serverTimestamp(),
         });
         showToast('新闻已成功更新！');
       } else {
         // 创建新文档
         await addDoc(collection(db, 'news'), {
-          title: formData.title.trim(),
-          category: formData.category,
-          date: formData.date,
-          summary: autoSummary,
-          content: formData.content.trim(),
+          ...payload,
           createdAt: serverTimestamp(),
         });
         showToast('新闻发布成功！已存入数据库。');
@@ -415,15 +436,27 @@ export default function AdminNewsPage() {
             <div className="md:hidden space-y-3">
               {filteredNews.map((item) => {
                 const badge = getCategoryBadge(item.category);
+                const isPub = item.published !== false;
                 return (
                   <div
                     key={item.id}
                     className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2.5 text-xs shadow-2xs"
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className={`px-2.5 py-0.5 rounded font-semibold text-[11px] border ${badge.className}`}>
-                        {badge.label}
-                      </span>
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <div className="flex items-center space-x-1.5">
+                        <span className={`px-2.5 py-0.5 rounded font-semibold text-[11px] border ${badge.className}`}>
+                          {badge.label}
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 rounded font-semibold text-[10px] border ${
+                            isPub
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : 'bg-amber-50 text-amber-700 border-amber-200'
+                          }`}
+                        >
+                          {isPub ? '已发布' : '草稿'}
+                        </span>
+                      </div>
                       <span className="text-slate-400 font-mono text-[11px]">{item.date}</span>
                     </div>
 
@@ -439,6 +472,13 @@ export default function AdminNewsPage() {
                         ID: {item.id}
                       </span>
                       <div className="flex items-center space-x-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => handleTogglePublished(item)}
+                          className="px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold cursor-pointer"
+                        >
+                          {isPub ? '下线' : '发布'}
+                        </button>
                         <button
                           type="button"
                           onClick={() => handleOpenEdit(item)}
@@ -462,19 +502,21 @@ export default function AdminNewsPage() {
 
             {/* 桌面端/平板表格视图 (hidden md:block) */}
             <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-xs text-left min-w-[650px]">
+              <table className="w-full text-xs text-left min-w-[700px]">
                 <thead>
                   <tr className="bg-slate-900 text-white">
                     <th className="px-4 py-3 font-semibold whitespace-nowrap">分类标签</th>
+                    <th className="px-4 py-3 font-semibold whitespace-nowrap">状态</th>
                     <th className="px-4 py-3 font-semibold min-w-[240px]">新闻标题</th>
                     <th className="px-4 py-3 font-semibold whitespace-nowrap">日期</th>
-                    <th className="px-4 py-3 font-semibold min-w-[220px]">摘要简介</th>
+                    <th className="px-4 py-3 font-semibold min-w-[200px]">摘要简介</th>
                     <th className="px-4 py-3 font-semibold whitespace-nowrap text-right">管理操作</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredNews.map((item, idx) => {
                     const badge = getCategoryBadge(item.category);
+                    const isPub = item.published !== false;
                     return (
                       <tr
                         key={item.id}
@@ -486,6 +528,20 @@ export default function AdminNewsPage() {
                           <span className={`px-2.5 py-0.5 rounded font-semibold text-[11px] border ${badge.className}`}>
                             {badge.label}
                           </span>
+                        </td>
+                        <td className="px-4 py-3.5 whitespace-nowrap">
+                          <button
+                            type="button"
+                            onClick={() => handleTogglePublished(item)}
+                            title="点击快速切换发布状态"
+                            className={`px-2 py-0.5 rounded font-semibold text-[10px] border cursor-pointer transition-all ${
+                              isPub
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                                : 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100'
+                            }`}
+                          >
+                            {isPub ? '● 已发布' : '○ 草稿/下线'}
+                          </button>
                         </td>
                         <td className="px-4 py-3.5">
                           <div className="font-bold text-slate-900 leading-snug">{item.title}</div>
@@ -546,7 +602,7 @@ export default function AdminNewsPage() {
                 {editingItem ? '编辑新闻动态' : '发布新闻'}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                数据将直接存入 Firestore 数据库的 news 集合
+                数据将直接存入 Firestore 数据库的 news 集合 (cauiice-site-en)
               </p>
             </div>
 
@@ -571,12 +627,15 @@ export default function AdminNewsPage() {
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800 bg-white"
                   >
-                    <optgroup label="新闻中心">
+                    <optgroup label="英文站标准分类 (English Portal)">
+                      <option value="work_updates">Work Updates (工作进展)</option>
+                      <option value="events">Events (重点活动)</option>
+                      <option value="policy_insights">Policy Insights (政策洞察)</option>
+                    </optgroup>
+                    <optgroup label="兼容中文分类标签">
                       <option value="国专委要闻">国专委要闻</option>
                       <option value="会员单位动态">会员单位动态</option>
                       <option value="媒体关注与报道">媒体关注与报道</option>
-                    </optgroup>
-                    <optgroup label="细分/兼容分类标签">
                       <option value="国专委动态">国专委动态</option>
                       <option value="行业热点">行业热点</option>
                       <option value="会议纪要">会议纪要</option>
@@ -600,16 +659,33 @@ export default function AdminNewsPage() {
                 </div>
                 <div className="sm:col-span-2">
                   <label className="block font-semibold text-slate-700 mb-1">
-                    摘要简介（选填，未填将自动截取正文首段）
+                    发布状态 (Published)
                   </label>
-                  <input
-                    type="text"
-                    value={formData.summary}
-                    onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-                    placeholder="一句话提炼核心亮点..."
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800"
-                  />
+                  <div className="flex items-center h-[38px] px-3 border border-slate-200 rounded-lg bg-slate-50">
+                    <label className="flex items-center space-x-2 cursor-pointer text-xs font-semibold text-slate-800">
+                      <input
+                        type="checkbox"
+                        checked={formData.published}
+                        onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+                        className="w-4 h-4 text-blue-900 rounded border-slate-300 focus:ring-blue-800"
+                      />
+                      <span>公开发布 (勾选即在前台展示，未勾选存为草稿)</span>
+                    </label>
+                  </div>
                 </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  摘要简介（选填，未填将自动截取正文首段）
+                </label>
+                <input
+                  type="text"
+                  value={formData.summary}
+                  onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+                  placeholder="一句话提炼核心亮点..."
+                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800"
+                />
               </div>
 
               <div>

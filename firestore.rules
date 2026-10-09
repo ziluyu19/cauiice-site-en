@@ -3,101 +3,180 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ─────────────────────────────────────────────────────────────
-    // 1. 管理员身份判别函数 (严格绑定唯一管理员 UID)
-    // ─────────────────────────────────────────────────────────────
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // This security rules file assumes the following data structures:
+    //
+    // Collection: news
+    // Document ID: auto-generated or string slug
+    // Fields:
+    //   - title: string
+    //   - date: string (YYYY-MM-DD)
+    //   - summary / description: string
+    //   - content: string
+    //   - category: string
+    //   - coverImage / image: string (optional)
+    //
+    // Collection: projects
+    // Document ID: auto-generated or string ID
+    // Fields:
+    //   - title: string
+    //   - description: string
+    //   - category / type: string
+    //   - status: string
+    //   - createdAt: timestamp
+    //
+    // Collection: members
+    // Document ID: auto-generated or string ID
+    // Fields:
+    //   - name / institution: string
+    //   - tier / category: string
+    //   - logo / icon: string (optional)
+    //   - createdAt: timestamp
+    //
+    // Collection: siteConfig
+    // Document ID: 'committee' | 'organisation' | 'contact' | 'international' | 'disclosure'
+    // Fields: key-value configuration objects
+    //
+    // Collection: notices (legacy compatibility)
+    // Document ID: auto-generated
+    //
+    // Collection: achievements (legacy compatibility)
+    // Document ID: auto-generated
+    //
+    // Collection: enquiries
+    // Document ID: auto-generated
+    // Fields:
+    //   - institution: string
+    //   - countryRegionCode: string
+    //   - contactName: string
+    //   - position: string (optional)
+    //   - email: string
+    //   - cooperationCategoryCode: string
+    //   - requirementSummary: string (<= 4000 chars)
+    //   - privacyConsent: bool
+    //   - sourcePage: string
+    //   - status: string ('pending' | 'reviewing' | 'contacted' | 'archived')
+    //   - createdAt: timestamp
+    //
+    // Collection: inquiries (legacy compatibility alias)
+    // Fields: contact, content, desc, message, name, unit, type, field, source, date, status, createdAt
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    // Dedicated English website project (cauiice-site-en) Administrator check.
+    // Strictly restricts administrative mutations and enquiries management
+    // exclusively to the verified Admin UID.
     function isAdmin() {
-      return request.auth != null
-          && request.auth.uid == "B6O8cveFwIMWBFylbHWz7LjgARw1";
+      return request.auth != null && request.auth.uid == 'clQUlsYgbRU9DCmK08xOOXlU7lo2';
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // 2. 网站官方公开内容集合：全网公开只读，仅唯一管理员可增删改
-    // ─────────────────────────────────────────────────────────────
+    // ===============================================================
+    // 1. Official Public Portal Content Collections
+    // Public read-only; mutations restricted strictly to administrators.
+    // ===============================================================
 
-    // 新闻中心
+    // News & Media Center
     match /news/{documentId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // 通知公告
-    match /notices/{documentId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    // 国际合作项目库
+    // International Cooperation Projects
     match /projects/{documentId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // 会员单位名录
+    // Member Institutions Directory
     match /members/{documentId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // 成果与智库 (兼容集合)
-    match /achievements/{documentId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    // 站点全局配置 (gaikuang, international, members, achievements, disclosure)
+    // Global Site Configuration (committee, organisation, contact, etc.)
     match /siteConfig/{configDoc} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // 3. 前台公众诉求与意向对接留言池 (inquiries)
-    // ─────────────────────────────────────────────────────────────
-    // 业务场景说明：
-    // A. 信息公开公众诉求 (app/disclosure): type, name, contact, content, status, createdAt
-    // B. 国际合作需求对接 (app/international): unit, type, field, contact, desc, source, createdAt, date
-    // C. 国专委概况在线咨询 (app/guozhuanwei-gaikuang): name, unit, contact, message, source, createdAt, date
-    // ─────────────────────────────────────────────────────────────
-    match /inquiries/{inquiryId} {
-      // 查询、官方办理答复、删除仅限唯一管理员
-      allow read, update, delete: if isAdmin();
-
-      // 匿名/前台访客提交：仅允许新增 (create)，严格限制字段白名单与内容长度，禁止伪造管理员字段
-      allow create: if
-        // 必须为合法键名白名单，绝不允许注入 reply, repliedBy, replyDate, isPublic 等管理字段
-        request.resource.data.keys().hasOnly([
-          'contact', 'content', 'desc', 'message',
-          'name', 'unit', 'type', 'field', 'source',
-          'status', 'date', 'createdAt'
-        ]) &&
-
-        // 联系方式必填且受限
-        request.resource.data.contact is string &&
-        request.resource.data.contact.size() > 0 &&
-        request.resource.data.contact.size() <= 120 &&
-
-        // 核心诉求正文：覆盖三类前台表单字段 (content / desc / message)，必有其一且不超过 4000 字符
-        (
-          (request.resource.data.content is string && request.resource.data.content.size() <= 4000) ||
-          (request.resource.data.desc is string && request.resource.data.desc.size() <= 4000) ||
-          (request.resource.data.message is string && request.resource.data.message.size() <= 4000)
-        ) &&
-
-        // 可选字段的严格类型与长度校验 (存在则必须满足约束)
-        (!('name' in request.resource.data) || (request.resource.data.name is string && request.resource.data.name.size() <= 100)) &&
-        (!('unit' in request.resource.data) || (request.resource.data.unit is string && request.resource.data.unit.size() <= 200)) &&
-        (!('type' in request.resource.data) || (request.resource.data.type is string && request.resource.data.type.size() <= 100)) &&
-        (!('field' in request.resource.data) || (request.resource.data.field is string && request.resource.data.field.size() <= 100)) &&
-        (!('source' in request.resource.data) || (request.resource.data.source is string && request.resource.data.source.size() <= 100)) &&
-        (!('status' in request.resource.data) || (request.resource.data.status is string && request.resource.data.status.size() <= 50)) &&
-        (!('date' in request.resource.data) || (request.resource.data.date is string && request.resource.data.date.size() <= 30)) &&
-        (!('createdAt' in request.resource.data) || request.resource.data.createdAt is timestamp);
+    // Notices & Announcements (legacy compatibility)
+    match /notices/{documentId} {
+      allow read: if true;
+      allow write: if isAdmin();
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // 4. 默认拒绝规则：全库所有未明确匹配路径禁止一切读写
-    // ─────────────────────────────────────────────────────────────
+    // Achievements & Think Tank (legacy compatibility)
+    match /achievements/{documentId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ===============================================================
+    // 2. Enquiries & Feedback Collections
+    // Public can create with strict validation; reads/updates/deletes are admin-only.
+    // ===============================================================
+
+    // English Portal Partnership Enquiries
+    match /enquiries/{enquiryId} {
+      // Management restricted to authenticated administrators
+      allow read, update, delete: if isAdmin();
+
+      // Public visitor submission: create only, strict whitelist and length bounds
+      allow create: if request.resource.data.keys().hasOnly([
+          'institution', 'countryRegionCode', 'contactName', 'position',
+          'email', 'cooperationCategoryCode', 'requirementSummary',
+          'privacyConsent', 'sourcePage', 'status', 'createdAt',
+          'contact', 'content', 'desc', 'message',
+          'name', 'unit', 'type', 'field', 'source', 'date'
+        ])
+        && request.resource.data.email is string
+        && request.resource.data.requirementSummary is string
+        && request.resource.data.requirementSummary.size() <= 4000;
+    }
+
+    // Public Inquiries & Consultation (legacy compatibility alias)
+    match /inquiries/{inquiryId} {
+      // Management restricted to authenticated administrators
+      allow read, update, delete: if isAdmin();
+
+      // Public visitor submission: create only, supports English and legacy schemas
+      allow create: if request.resource.data.keys().hasOnly([
+          'institution', 'countryRegionCode', 'contactName', 'position',
+          'email', 'cooperationCategoryCode', 'requirementSummary',
+          'privacyConsent', 'sourcePage', 'status', 'createdAt',
+          'contact', 'content', 'desc', 'message',
+          'name', 'unit', 'type', 'field', 'source', 'date'
+        ])
+        && (
+          // English enquiry format
+          (('email' in request.resource.data)
+            && request.resource.data.email is string
+            && ('requirementSummary' in request.resource.data)
+            && request.resource.data.requirementSummary is string
+            && request.resource.data.requirementSummary.size() <= 4000)
+          ||
+          // Legacy inquiry format
+          (('contact' in request.resource.data)
+            && request.resource.data.contact is string
+            && (
+              (('content' in request.resource.data) && request.resource.data.content is string && request.resource.data.content.size() <= 4000) ||
+              (('desc' in request.resource.data) && request.resource.data.desc is string && request.resource.data.desc.size() <= 4000) ||
+              (('message' in request.resource.data) && request.resource.data.message is string && request.resource.data.message.size() <= 4000) ||
+              (('requirementSummary' in request.resource.data) && request.resource.data.requirementSummary is string && request.resource.data.requirementSummary.size() <= 4000)
+            ))
+        );
+    }
+
+    // ===============================================================
+    // 3. Default Deny Rule
+    // Deny all unhandled paths and operations across the entire database.
+    // ===============================================================
     match /{document=**} {
       allow read, write: if false;
     }

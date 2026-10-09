@@ -27,8 +27,8 @@ export default function Navbar() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // 后台管理页面无需渲染前台主导航
-  if (pathname?.startsWith("/admin")) {
+  // 后台管理页面与英文前台页面无需渲染中文主导航
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/en")) {
     return null;
   }
 

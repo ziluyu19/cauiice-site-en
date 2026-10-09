@@ -28,6 +28,27 @@ export default function AdminDashboardLayout({
       isHandled = true;
 
       if (auth.currentUser) {
+        const configuredAdminUid = process.env.NEXT_PUBLIC_ADMIN_UID;
+        if (!configuredAdminUid) {
+          setErrorMessage('管理员配置缺失：尚未在 .env.local 中配置 NEXT_PUBLIC_ADMIN_UID，禁止访问管理后台');
+          try {
+            sessionStorage.setItem('admin_auth_error', '管理员配置缺失：尚未在 .env.local 中配置 NEXT_PUBLIC_ADMIN_UID，禁止访问管理后台');
+          } catch (e) {}
+          signOut(auth).finally(() => {
+            router.push('/admin/login');
+          });
+          return;
+        }
+        if (auth.currentUser.uid !== configuredAdminUid) {
+          setErrorMessage('无管理员权限：该账号未被授予系统管理权限');
+          try {
+            sessionStorage.setItem('admin_auth_error', '无管理员权限：该账号未被授予系统管理权限');
+          } catch (e) {}
+          signOut(auth).finally(() => {
+            router.push('/admin/login');
+          });
+          return;
+        }
         setCurrentUser(auth.currentUser);
         setLoading(false);
       } else {
@@ -58,7 +79,18 @@ export default function AdminDashboardLayout({
         clearTimeout(timeoutTimer);
 
         if (user) {
-          if (user.uid !== 'B6O8cveFwIMWBFylbHWz7LjgARw1') {
+          const configuredAdminUid = process.env.NEXT_PUBLIC_ADMIN_UID;
+          if (!configuredAdminUid) {
+            setErrorMessage('管理员配置缺失：尚未在 .env.local 中配置 NEXT_PUBLIC_ADMIN_UID，禁止访问管理后台');
+            try {
+              sessionStorage.setItem('admin_auth_error', '管理员配置缺失：尚未在 .env.local 中配置 NEXT_PUBLIC_ADMIN_UID，禁止访问管理后台');
+            } catch (e) {}
+            signOut(auth).finally(() => {
+              router.push('/admin/login');
+            });
+            return;
+          }
+          if (user.uid !== configuredAdminUid) {
             setErrorMessage('无管理员权限：该账号未被授予系统管理权限');
             try {
               sessionStorage.setItem('admin_auth_error', '无管理员权限：该账号未被授予系统管理权限');
@@ -108,7 +140,7 @@ export default function AdminDashboardLayout({
     }
   };
 
-  // 菜单配置
+  // 菜单配置（严格与英文站前台保留的业务对象对齐）
   const navMenuItems = [
     {
       href: '/admin/dashboard',
@@ -121,18 +153,8 @@ export default function AdminDashboardLayout({
       ),
     },
     {
-      href: '/admin/dashboard/profile',
-      label: '国专委概况管理',
-      exact: false,
-      icon: (
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-        </svg>
-      ),
-    },
-    {
       href: '/admin/dashboard/news',
-      label: '新闻管理',
+      label: '新闻资讯管理 (News)',
       exact: false,
       icon: (
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -141,18 +163,8 @@ export default function AdminDashboardLayout({
       ),
     },
     {
-      href: '/admin/dashboard/notices',
-      label: '通知管理',
-      exact: false,
-      icon: (
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-        </svg>
-      ),
-    },
-    {
       href: '/admin/dashboard/projects',
-      label: '国际合作管理',
+      label: '合作项目管理 (Projects)',
       exact: false,
       icon: (
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -162,7 +174,7 @@ export default function AdminDashboardLayout({
     },
     {
       href: '/admin/dashboard/members',
-      label: '会员单位与服务',
+      label: '会员网络管理 (Members)',
       exact: false,
       icon: (
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -171,22 +183,22 @@ export default function AdminDashboardLayout({
       ),
     },
     {
-      href: '/admin/dashboard/achievements',
-      label: '成果与智库管理',
+      href: '/admin/dashboard/enquiries',
+      label: '合作意向管理 (Enquiries)',
       exact: false,
       icon: (
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       ),
     },
     {
-      href: '/admin/dashboard/disclosure',
-      label: '信息公开管理',
+      href: '/admin/dashboard/profile',
+      label: '站点与组织配置 (Site Config)',
       exact: false,
       icon: (
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
       ),
     },
@@ -325,15 +337,16 @@ export default function AdminDashboardLayout({
 
         {/* 侧边栏底部快捷操作 */}
         <div className="p-4 border-t border-slate-800 bg-slate-950/60 space-y-2">
-          {/* 回到前台按钮 */}
+          {/* 回到英文站前台 */}
           <Link
-            href="/"
+            href="/en"
+            target="_blank"
             className="flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs text-blue-300 hover:text-white hover:bg-blue-900/40 transition-colors"
           >
             <svg className="w-4 h-4 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
-            <span className="font-medium">回到前台首页</span>
+            <span className="font-medium">浏览英文站前台 ↗</span>
           </Link>
 
           {/* 退出登录 */}

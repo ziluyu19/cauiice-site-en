@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
 export default function AdminLoginPage() {
@@ -36,6 +36,19 @@ export default function AdminLoginPage() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       clearTimeout(timer);
       if (user) {
+        const configuredAdminUid = process.env.NEXT_PUBLIC_ADMIN_UID;
+        if (!configuredAdminUid) {
+          setErrorMsg('管理员配置缺失：尚未在 .env.local 中配置 NEXT_PUBLIC_ADMIN_UID，禁止访问管理后台');
+          signOut(auth);
+          setCheckingAuth(false);
+          return;
+        }
+        if (user.uid !== configuredAdminUid) {
+          setErrorMsg('无管理员权限：该账号未被授予系统管理权限');
+          signOut(auth);
+          setCheckingAuth(false);
+          return;
+        }
         router.replace('/admin/dashboard');
       } else {
         setCheckingAuth(false);
@@ -73,7 +86,18 @@ export default function AdminLoginPage() {
     setErrorMsg('');
 
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), password);
+      const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+      const configuredAdminUid = process.env.NEXT_PUBLIC_ADMIN_UID;
+      if (!configuredAdminUid) {
+        await signOut(auth);
+        setErrorMsg('管理员配置缺失：尚未在 .env.local 中配置 NEXT_PUBLIC_ADMIN_UID，禁止访问管理后台');
+        return;
+      }
+      if (userCredential.user.uid !== configuredAdminUid) {
+        await signOut(auth);
+        setErrorMsg('无管理员权限：该账号未被授予系统管理权限');
+        return;
+      }
       router.push('/admin/dashboard');
     } catch (err: any) {
       console.error('Login error:', err);
